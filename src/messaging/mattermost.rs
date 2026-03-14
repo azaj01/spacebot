@@ -665,16 +665,20 @@ impl Messaging for MattermostAdapter {
                     active.accumulated_text.push_str(&chunk);
 
                     if active.last_edit.elapsed() > STREAM_EDIT_THROTTLE {
-                        let display_text = if active.accumulated_text.len() > MAX_MESSAGE_LENGTH {
-                            let end = active
-                                .accumulated_text
-                                .floor_char_boundary(MAX_MESSAGE_LENGTH - 3);
-                            format!("{}...", &active.accumulated_text[..end])
-                        } else {
-                            active.accumulated_text.clone()
-                        };
+                        let display_text: std::borrow::Cow<'_, str> =
+                            if active.accumulated_text.len() > MAX_MESSAGE_LENGTH {
+                                let end = active
+                                    .accumulated_text
+                                    .floor_char_boundary(MAX_MESSAGE_LENGTH - 3);
+                                std::borrow::Cow::Owned(format!(
+                                    "{}...",
+                                    &active.accumulated_text[..end]
+                                ))
+                            } else {
+                                std::borrow::Cow::Borrowed(active.accumulated_text.as_str())
+                            };
 
-                        if let Err(error) = self.edit_post(&active.post_id, &display_text).await {
+                        if let Err(error) = self.edit_post(&active.post_id, display_text.as_ref()).await {
                             tracing::warn!(%error, "failed to edit streaming message");
                         }
                         active.last_edit = Instant::now();
