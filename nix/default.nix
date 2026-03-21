@@ -247,7 +247,7 @@
     inherit nativeBuildInputs buildInputs;
     strictDeps = true;
 
-    doCheck = false;
+    doCheck = true;
 
     postPatch = postPatchImapProto;
 
