@@ -119,8 +119,16 @@ export type WebChatHistoryMessage =
 	components["schemas"]["WebChatHistoryMessage"];
 
 // Conversation Settings
+export type ModelOverrides = {
+	channel?: string | null;
+	branch?: string | null;
+	worker?: string | null;
+	compactor?: string | null;
+};
+
 export type ConversationSettings = {
 	model?: string | null;
+	model_overrides?: ModelOverrides;
 	memory?: "full" | "ambient" | "off";
 	delegation?: "standard" | "direct";
 	worker_context?: {

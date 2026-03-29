@@ -118,14 +118,46 @@ pub struct WorkerContextMode {
     pub memory: WorkerMemoryMode,
 }
 
+/// Per-process model overrides. Each field, when set, overrides the
+/// routing config for that specific process type within this conversation.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, utoipa::ToSchema)]
+pub struct ModelOverrides {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub channel: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub branch: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub worker: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compactor: Option<String>,
+}
+
+impl ModelOverrides {
+    /// Resolve the model for a given process type.
+    /// Priority: per-process override > blanket model > None (use routing default).
+    pub fn resolve_for_process(&self, process: &str, blanket: Option<&str>) -> Option<String> {
+        let per_process = match process {
+            "channel" => self.channel.as_deref(),
+            "branch" => self.branch.as_deref(),
+            "worker" => self.worker.as_deref(),
+            "compactor" => self.compactor.as_deref(),
+            _ => None,
+        };
+        per_process.or(blanket).map(String::from)
+    }
+}
+
 /// Per-conversation settings that control behavior.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct ConversationSettings {
-    /// Optional model override for this conversation's channel process.
-    /// When set, overrides routing.channel for this conversation.
-    /// Branches and workers spawned from this conversation inherit the override.
+    /// Blanket model override — applies to all processes unless a per-process
+    /// override is set in `model_overrides`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+
+    /// Per-process model overrides. Takes priority over `model`.
+    #[serde(default)]
+    pub model_overrides: ModelOverrides,
 
     /// How memory is used in this conversation.
     #[serde(default)]
@@ -144,8 +176,10 @@ pub struct ConversationSettings {
 /// This is what gets used at runtime.
 #[derive(Debug, Clone)]
 pub struct ResolvedConversationSettings {
-    /// The resolved model override (None means use routing config).
+    /// Blanket model override (None means use routing config).
     pub model: Option<String>,
+    /// Per-process model overrides.
+    pub model_overrides: ModelOverrides,
     /// The resolved memory mode.
     pub memory: MemoryMode,
     /// The resolved delegation mode.
@@ -155,14 +189,22 @@ pub struct ResolvedConversationSettings {
 }
 
 impl ResolvedConversationSettings {
+    /// Resolve the model for a given process type.
+    /// Priority: per-process override > blanket model > None (use routing default).
+    pub fn resolve_model(&self, process: &str) -> Option<&str> {
+        let per_process = match process {
+            "channel" => self.model_overrides.channel.as_deref(),
+            "branch" => self.model_overrides.branch.as_deref(),
+            "worker" => self.model_overrides.worker.as_deref(),
+            "compactor" => self.model_overrides.compactor.as_deref(),
+            _ => None,
+        };
+        per_process.or(self.model.as_deref())
+    }
+
     /// Create default resolved settings.
     pub fn default_with_agent(_agent_id: &str) -> Self {
-        Self {
-            model: None,
-            memory: MemoryMode::Full,
-            delegation: DelegationMode::Standard,
-            worker_context: WorkerContextMode::default(),
-        }
+        Self::default()
     }
 
     /// Resolve settings from conversation-level, channel-level, and agent defaults.
@@ -178,6 +220,7 @@ impl ResolvedConversationSettings {
         // Apply agent defaults if present
         if let Some(default) = agent_default {
             resolved.model = default.model.clone();
+            resolved.model_overrides = default.model_overrides.clone();
             resolved.memory = default.memory;
             resolved.delegation = default.delegation;
             resolved.worker_context = default.worker_context.clone();
@@ -188,6 +231,10 @@ impl ResolvedConversationSettings {
             if channel_settings.model.is_some() {
                 resolved.model = channel_settings.model.clone();
             }
+            merge_model_overrides(
+                &mut resolved.model_overrides,
+                &channel_settings.model_overrides,
+            );
             resolved.memory = channel_settings.memory;
             resolved.delegation = channel_settings.delegation;
             resolved.worker_context = channel_settings.worker_context.clone();
@@ -198,6 +245,10 @@ impl ResolvedConversationSettings {
             if conv_settings.model.is_some() {
                 resolved.model = conv_settings.model.clone();
             }
+            merge_model_overrides(
+                &mut resolved.model_overrides,
+                &conv_settings.model_overrides,
+            );
             resolved.memory = conv_settings.memory;
             resolved.delegation = conv_settings.delegation;
             resolved.worker_context = conv_settings.worker_context.clone();
@@ -207,10 +258,27 @@ impl ResolvedConversationSettings {
     }
 }
 
+/// Merge per-process overrides: source values that are `Some` override target values.
+fn merge_model_overrides(target: &mut ModelOverrides, source: &ModelOverrides) {
+    if source.channel.is_some() {
+        target.channel = source.channel.clone();
+    }
+    if source.branch.is_some() {
+        target.branch = source.branch.clone();
+    }
+    if source.worker.is_some() {
+        target.worker = source.worker.clone();
+    }
+    if source.compactor.is_some() {
+        target.compactor = source.compactor.clone();
+    }
+}
+
 impl Default for ResolvedConversationSettings {
     fn default() -> Self {
         Self {
             model: None,
+            model_overrides: ModelOverrides::default(),
             memory: MemoryMode::Full,
             delegation: DelegationMode::Standard,
             worker_context: WorkerContextMode::default(),
@@ -292,16 +360,13 @@ mod tests {
         // Test that conversation settings override channel settings
         let agent_default = ConversationSettings {
             model: Some("agent-model".to_string()),
-            memory: MemoryMode::Full,
-            delegation: DelegationMode::Standard,
-            worker_context: WorkerContextMode::default(),
+            ..Default::default()
         };
 
         let channel_settings = ConversationSettings {
             model: Some("channel-model".to_string()),
             memory: MemoryMode::Ambient,
-            delegation: DelegationMode::Standard,
-            worker_context: WorkerContextMode::default(),
+            ..Default::default()
         };
 
         let conversation_settings = ConversationSettings {
@@ -312,6 +377,7 @@ mod tests {
                 history: WorkerHistoryMode::Recent(20),
                 memory: WorkerMemoryMode::Tools,
             },
+            ..Default::default()
         };
 
         let resolved = ResolvedConversationSettings::resolve(

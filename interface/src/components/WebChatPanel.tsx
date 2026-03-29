@@ -7,8 +7,11 @@ import {Markdown} from "@/components/Markdown";
 import {ConversationSettingsPanel} from "@/components/ConversationSettingsPanel";
 import {ConversationsSidebar} from "@/components/ConversationsSidebar";
 import {Button} from "@/ui/Button";
+import {Popover, PopoverTrigger, PopoverContent} from "@/ui/Popover";
 import {api, type ConversationDefaultsResponse, type ConversationSettings} from "@/api/client";
 import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
+import {Settings02Icon} from "@hugeicons/core-free-icons";
+import {HugeiconsIcon} from "@hugeicons/react";
 
 interface WebChatPanelProps {
 	agentId: string;
@@ -278,10 +281,18 @@ export function WebChatPanel({agentId}: WebChatPanelProps) {
 		sendMessage(trimmed);
 	};
 
-	const handleSaveSettings = () => {
-		console.log("Saving settings:", settings);
-		setShowSettings(false);
-	};
+	const saveSettingsMutation = useMutation({
+		mutationFn: async () => {
+			if (!activeConversationId) return;
+			const response = await api.updatePortalConversation(agentId, activeConversationId, undefined, undefined, settings);
+			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			return response.json();
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["portal-conversations", agentId] });
+			setShowSettings(false);
+		},
+	});
 
 	return (
 		<div className="flex h-full w-full">
@@ -299,40 +310,35 @@ export function WebChatPanel({agentId}: WebChatPanelProps) {
 
 			{/* Main Chat Area */}
 			<div className="relative flex flex-1 flex-col">
-				{/* Header with settings button */}
+				{/* Header */}
 				<div className="flex items-center justify-between border-b border-app-line px-4 py-2">
 					<h2 className="text-sm font-medium">{agentId}</h2>
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() => setShowSettings(!showSettings)}
-						className="text-xs"
-					>
-						⚙️ Settings
-					</Button>
+					<Popover open={showSettings} onOpenChange={setShowSettings}>
+						<PopoverTrigger asChild>
+							<Button variant="ghost" size="icon" className="h-7 w-7">
+								<HugeiconsIcon icon={Settings02Icon} className="h-3.5 w-3.5" />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent align="end" sideOffset={4} className="w-80 p-3">
+							{defaultsLoading ? (
+								<div className="py-4 text-center text-xs text-ink-faint">Loading...</div>
+							) : defaults ? (
+								<ConversationSettingsPanel
+									defaults={defaults}
+									currentSettings={settings}
+									onChange={setSettings}
+									onSave={() => saveSettingsMutation.mutate()}
+									onCancel={() => setShowSettings(false)}
+									saving={saveSettingsMutation.isPending}
+								/>
+							) : (
+								<div className="py-4 text-center text-xs text-red-400">
+									{defaultsError instanceof Error ? defaultsError.message : "Failed to load settings"}
+								</div>
+							)}
+						</PopoverContent>
+					</Popover>
 				</div>
-
-				{/* Settings Panel */}
-				{showSettings && (
-					<div className="border-b border-app-line bg-app-box px-4 py-3">
-						{defaultsLoading ? (
-							<div className="py-4 text-center text-sm text-ink-faint">Loading settings...</div>
-						) : defaults ? (
-							<ConversationSettingsPanel
-								defaults={defaults}
-								currentSettings={settings}
-								onChange={setSettings}
-								onSave={handleSaveSettings}
-							/>
-						) : defaultsError ? (
-							<div className="py-4 text-center text-sm text-red-400">
-								Failed to load settings: {defaultsError instanceof Error ? defaultsError.message : "Unknown error"}
-							</div>
-						) : (
-							<div className="py-4 text-center text-sm text-red-400">Failed to load settings</div>
-						)}
-					</div>
-				)}
 
 				{/* Messages */}
 				<div ref={scrollRef} className="flex-1 overflow-x-hidden overflow-y-auto">

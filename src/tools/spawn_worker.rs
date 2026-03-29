@@ -448,6 +448,8 @@ impl Tool for DetachedSpawnWorkerTool {
             brave_search_key,
             self.logs_dir.clone(),
             Vec::new(), // no initial history for detached workers
+            crate::conversation::settings::WorkerMemoryMode::None,
+            None, // No model override for detached workers
         );
 
         let (worker, _input_tx) = worker;

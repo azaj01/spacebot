@@ -83,21 +83,18 @@ export function ConversationsSidebar({
   };
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-app-line bg-app-box">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-app-line px-3 py-2">
-        <h2 className="text-sm font-medium">Conversations</h2>
-        <Button
-          variant="ghost"
-          size="sm"
+    <div className="flex h-full w-56 shrink-0 flex-col border-r border-app-line">
+      {/* New conversation button */}
+      <div className="border-b border-app-line p-2">
+        <button
           onClick={onCreateConversation}
-          className="h-7 w-7 p-0"
-          title="New conversation"
+          className="flex w-full items-center gap-2 rounded-md border border-app-line px-3 py-1.5 text-xs text-ink-dull transition-colors hover:border-accent/40 hover:text-ink"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 5v14M5 12h14" />
           </svg>
-        </Button>
+          New conversation
+        </button>
       </div>
 
       {/* Conversations List */}
@@ -109,68 +106,52 @@ export function ConversationsSidebar({
             No conversations yet
           </div>
         ) : (
-          <div className="space-y-0.5 px-2">
+          <div className="space-y-px px-2">
             {activeConversations.map((conv) => (
               <div
                 key={conv.id}
-                className={`group relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors ${
+                className={`group relative flex cursor-pointer items-center rounded-md px-2 py-1.5 text-xs transition-colors ${
                   activeConversationId === conv.id
                     ? "bg-accent/10 text-accent"
-                    : "text-ink hover:bg-app-hover"
+                    : "text-ink-dull hover:bg-app-hover hover:text-ink"
                 }`}
                 onClick={() => onSelectConversation(conv.id)}
               >
-                <div className="flex-1 min-w-0">
-                  <div className="truncate font-medium">{conv.title}</div>
-                  {conv.last_message_preview && (
-                    <div className="truncate text-xs text-ink-faint">
-                      {conv.last_message_preview}
-                    </div>
-                  )}
+                <div className="min-w-0 flex-1">
+                  <div className="truncate">{conv.title}</div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-ink-faint">{formatDate(conv.updated_at)}</span>
-                  
-                  {/* Actions Menu */}
-                  <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRename(conv);
-                      }}
-                      className="p-1 rounded hover:bg-app-hover text-ink-faint hover:text-ink"
-                      title="Rename"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onArchiveConversation(conv.id, true);
-                      }}
-                      className="p-1 rounded hover:bg-app-hover text-ink-faint hover:text-ink"
-                      title="Archive"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(conv);
-                      }}
-                      className="p-1 rounded hover:bg-red-500/20 text-ink-faint hover:text-red-400"
-                      title="Delete"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </div>
+                <span className="ml-2 shrink-0 text-[10px] text-ink-faint group-hover:hidden">
+                  {formatDate(conv.updated_at)}
+                </span>
+                <div className="ml-2 hidden shrink-0 items-center gap-0.5 group-hover:flex">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleRename(conv); }}
+                    className="rounded p-0.5 text-ink-faint hover:bg-app-hover hover:text-ink"
+                    title="Rename"
+                  >
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onArchiveConversation(conv.id, true); }}
+                    className="rounded p-0.5 text-ink-faint hover:bg-app-hover hover:text-ink"
+                    title="Archive"
+                  >
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDelete(conv); }}
+                    className="rounded p-0.5 text-ink-faint hover:bg-red-500/20 hover:text-red-400"
+                    title="Delete"
+                  >
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}

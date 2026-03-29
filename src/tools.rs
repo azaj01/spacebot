@@ -172,6 +172,7 @@ pub use factory_update_identity::{
 
 use crate::agent::channel::ChannelState;
 use crate::config::{BrowserConfig, RuntimeConfig};
+use crate::conversation::settings::WorkerMemoryMode;
 use crate::memory::MemorySearch;
 use crate::sandbox::Sandbox;
 use crate::tasks::TaskStore;
@@ -649,6 +650,8 @@ pub fn create_worker_tool_server(
     sandbox: Arc<Sandbox>,
     mcp_tools: Vec<McpToolAdapter>,
     runtime_config: Arc<RuntimeConfig>,
+    worker_memory_mode: WorkerMemoryMode,
+    memory_search: Arc<MemorySearch>,
 ) -> ToolServerHandle {
     let mut server = ToolServer::new()
         .tool(ShellTool::new(workspace.clone(), sandbox.clone()))
@@ -658,7 +661,8 @@ pub fn create_worker_tool_server(
             worker_id,
         ))
         .tool({
-            let mut status_tool = SetStatusTool::new(agent_id, worker_id, channel_id, event_tx);
+            let mut status_tool =
+                SetStatusTool::new(agent_id.clone(), worker_id, channel_id, event_tx.clone());
             if let Some(store) = runtime_config.secrets.load().as_ref() {
                 status_tool = status_tool.with_tool_secrets(store.tool_secret_pairs());
             }
@@ -678,6 +682,21 @@ pub fn create_worker_tool_server(
 
     if let Some(key) = brave_search_key {
         server = server.tool(WebSearchTool::new(key));
+    }
+
+    // Conditionally add memory tools based on worker memory mode.
+    if worker_memory_mode.recall_enabled() {
+        server = server.tool(MemoryRecallTool::new(memory_search.clone()));
+    }
+    if worker_memory_mode.full_tools_enabled() {
+        server = server
+            .tool(memory_save_with_events(
+                memory_search.clone(),
+                agent_id,
+                event_tx,
+                None,
+            ))
+            .tool(MemoryDeleteTool::new(memory_search));
     }
 
     for mcp_tool in mcp_tools {

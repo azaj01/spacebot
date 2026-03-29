@@ -1919,6 +1919,24 @@ async fn run(
                         .load()
                         .as_ref()
                         .clone();
+
+                    // Load per-conversation settings for portal conversations (idle worker resume).
+                    let resolved_settings = {
+                        let store = spacebot::conversation::PortalConversationStore::new(
+                            agent.deps.sqlite_pool.clone(),
+                        );
+                        match store.get(&agent_id.to_string(), &conversation_id).await {
+                            Ok(Some(conv)) => {
+                                spacebot::conversation::settings::ResolvedConversationSettings::resolve(
+                                    conv.settings.as_ref(),
+                                    None,
+                                    None,
+                                )
+                            }
+                            _ => spacebot::conversation::settings::ResolvedConversationSettings::default(),
+                        }
+                    };
+
                     let (mut channel, channel_tx) = spacebot::agent::channel::Channel::new(
                         channel_id,
                         agent.deps.clone(),
@@ -1928,7 +1946,7 @@ async fn run(
                         agent.config.logs_dir(),
                         snapshot_store,
                         Some(api_state.live_worker_transcripts.clone()),
-                        spacebot::conversation::settings::ResolvedConversationSettings::default(),
+                        resolved_settings,
                     );
                     let channel_registration_id = agent
                         .deps
@@ -2128,6 +2146,36 @@ async fn run(
                         .load()
                         .as_ref()
                         .clone();
+
+                    // Load per-conversation settings for portal conversations.
+                    let resolved_settings = if message.adapter.as_deref() == Some("portal") {
+                        let store = spacebot::conversation::PortalConversationStore::new(
+                            agent.deps.sqlite_pool.clone(),
+                        );
+                        match store.get(&agent_id.to_string(), &conversation_id).await {
+                            Ok(Some(conv)) => {
+                                spacebot::conversation::settings::ResolvedConversationSettings::resolve(
+                                    conv.settings.as_ref(),
+                                    None,
+                                    None,
+                                )
+                            }
+                            Ok(None) => {
+                                spacebot::conversation::settings::ResolvedConversationSettings::default()
+                            }
+                            Err(error) => {
+                                tracing::warn!(
+                                    %error,
+                                    %conversation_id,
+                                    "failed to load portal conversation settings, using defaults"
+                                );
+                                spacebot::conversation::settings::ResolvedConversationSettings::default()
+                            }
+                        }
+                    } else {
+                        spacebot::conversation::settings::ResolvedConversationSettings::default()
+                    };
+
                     let (mut channel, channel_tx) = spacebot::agent::channel::Channel::new(
                         channel_id,
                         agent.deps.clone(),
@@ -2137,7 +2185,7 @@ async fn run(
                         agent.config.logs_dir(),
                         snapshot_store,
                         Some(api_state.live_worker_transcripts.clone()),
-                        spacebot::conversation::settings::ResolvedConversationSettings::default(),
+                        resolved_settings,
                     );
                     let channel_registration_id = agent
                         .deps

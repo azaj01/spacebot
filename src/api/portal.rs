@@ -383,36 +383,32 @@ pub(super) async fn conversation_defaults(
         return Err(StatusCode::NOT_FOUND);
     }
 
-    // Default model (placeholder - in Phase 2 will be resolved from agent config)
-    let default_model = "anthropic/claude-sonnet-4".to_string();
+    // Resolve default model from agent's routing config.
+    let default_model = {
+        let runtime_configs = state.runtime_configs.load();
+        runtime_configs
+            .get(&query.agent_id)
+            .map(|rc| rc.routing.load().channel.clone())
+            .unwrap_or_else(|| "anthropic/claude-sonnet-4".to_string())
+    };
 
-    // Build available models list
-    let available_models = vec![
-        ModelOption {
-            id: "anthropic/claude-sonnet-4".to_string(),
-            name: "Claude Sonnet 4".to_string(),
-            provider: "anthropic".to_string(),
-            context_window: 200_000,
-            supports_tools: true,
-            supports_thinking: true,
-        },
-        ModelOption {
-            id: "anthropic/claude-opus-4".to_string(),
-            name: "Claude Opus 4".to_string(),
-            provider: "anthropic".to_string(),
-            context_window: 200_000,
-            supports_tools: true,
-            supports_thinking: true,
-        },
-        ModelOption {
-            id: "anthropic/claude-haiku-4.5".to_string(),
-            name: "Claude Haiku 4.5".to_string(),
-            provider: "anthropic".to_string(),
-            context_window: 128_000,
-            supports_tools: true,
-            supports_thinking: false,
-        },
-    ];
+    // Build available models from configured providers via the models catalog.
+    let config_path = state.config_path.read().await.clone();
+    let configured = super::models::configured_providers(&config_path).await;
+    let catalog = super::models::ensure_models_cache().await;
+
+    let available_models: Vec<ModelOption> = catalog
+        .into_iter()
+        .filter(|m| configured.contains(&m.provider.as_str()) && m.tool_call)
+        .map(|m| ModelOption {
+            id: m.id,
+            name: m.name,
+            provider: m.provider,
+            context_window: m.context_window.unwrap_or(0) as usize,
+            supports_tools: m.tool_call,
+            supports_thinking: m.reasoning,
+        })
+        .collect();
 
     let response = ConversationDefaultsResponse {
         model: default_model,

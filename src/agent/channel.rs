@@ -128,6 +128,9 @@ pub struct ChannelState {
     /// Worker context settings inherited from conversation settings.
     /// Determines what context workers spawned from this channel receive.
     pub worker_context_settings: Arc<RwLock<crate::conversation::settings::WorkerContextMode>>,
+    /// Resolved model overrides from conversation settings.
+    /// Used by branches, workers, and compactor to resolve their model.
+    pub model_overrides: Arc<crate::conversation::settings::ResolvedConversationSettings>,
 }
 
 impl ChannelState {
@@ -519,7 +522,14 @@ impl Channel {
         let process_run_logger = ProcessRunLogger::new(deps.sqlite_pool.clone());
         let channel_store = ChannelStore::new(deps.sqlite_pool.clone());
 
-        let compactor = Compactor::new(id.clone(), deps.clone(), history.clone());
+        let compactor = Compactor::new(
+            id.clone(),
+            deps.clone(),
+            history.clone(),
+            resolved_settings
+                .resolve_model("compactor")
+                .map(String::from),
+        );
 
         let state = ChannelState {
             channel_id: id.clone(),
@@ -544,6 +554,7 @@ impl Channel {
             worker_context_settings: Arc::new(RwLock::new(
                 resolved_settings.worker_context.clone(),
             )),
+            model_overrides: Arc::new(resolved_settings.clone()),
         };
 
         // Each channel gets its own isolated tool server to avoid races between
@@ -2412,12 +2423,14 @@ impl Channel {
             **rc.max_turns.load()
         };
 
-        // Check for model override from conversation settings
-        let model_name = if let Some(ref override_model) = self.resolved_settings.model {
-            override_model.as_str()
-        } else {
-            routing.resolve(ProcessType::Channel, None)
-        };
+        // Check for model override from conversation settings.
+        // Priority: per-process override > blanket override > routing config.
+        let model_name =
+            if let Some(override_model) = self.resolved_settings.resolve_model("channel") {
+                override_model
+            } else {
+                routing.resolve(ProcessType::Channel, None)
+            };
 
         let model = SpacebotModel::make(&self.deps.llm_manager, model_name)
             .with_context(&*self.deps.agent_id, "channel")
@@ -3268,7 +3281,10 @@ impl Channel {
     /// 3. **Event density** — working memory events from this channel since last persistence
     async fn check_memory_persistence(&mut self) {
         let config = **self.deps.runtime_config.memory_persistence.load();
-        if !config.enabled || config.message_interval == 0 {
+        if !config.enabled
+            || config.message_interval == 0
+            || !self.resolved_settings.memory.persistence_enabled()
+        {
             return;
         }
 

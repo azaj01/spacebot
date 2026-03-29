@@ -284,6 +284,10 @@ async fn spawn_branch(
             max_turns: branch_max_turns,
             memory_persistence_contract,
         },
+        state
+            .model_overrides
+            .resolve_model("branch")
+            .map(String::from),
     );
 
     let branch_id = branch.id;
@@ -535,7 +539,10 @@ async fn spawn_worker_inner(
     let initial_history: Vec<rig::message::Message> = match worker_context.history {
         WorkerHistoryMode::None => Vec::new(),
         WorkerHistoryMode::Summary => {
-            // Generate a summary (simplified - just use empty for now)
+            // TODO: Generate an LLM-based summary of conversation history.
+            tracing::warn!(
+                "WorkerHistoryMode::Summary is not yet implemented, worker will receive no history"
+            );
             Vec::new()
         }
         WorkerHistoryMode::Recent(n) => {
@@ -554,6 +561,11 @@ async fn spawn_worker_inner(
         }
     };
 
+    let worker_model_override = state
+        .model_overrides
+        .resolve_model("worker")
+        .map(String::from);
+
     let worker = if interactive {
         let (worker, input_tx, inject_tx) = Worker::new_interactive(
             Some(state.channel_id.clone()),
@@ -565,6 +577,8 @@ async fn spawn_worker_inner(
             brave_search_key.clone(),
             state.logs_dir.clone(),
             initial_history,
+            worker_context.memory,
+            worker_model_override,
         );
         let worker_id = worker.id;
         state
@@ -589,6 +603,8 @@ async fn spawn_worker_inner(
             brave_search_key,
             state.logs_dir.clone(),
             initial_history,
+            worker_context.memory,
+            worker_model_override,
         );
         state
             .worker_injections
