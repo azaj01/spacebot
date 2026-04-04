@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Button } from "@/ui/Button";
 import {
-	Select,
+	Button,
+	SelectRoot,
 	SelectTrigger,
 	SelectValue,
 	SelectContent,
 	SelectItem,
 	SelectGroup,
 	SelectLabel,
-} from "@/ui/Select";
+} from "@spaceui/primitives";
 import type { ConversationSettings, ConversationDefaultsResponse } from "@/api/types";
 
 interface ConversationSettingsPanelProps {
@@ -207,7 +207,7 @@ export function ConversationSettingsPanel({
 			{/* Core settings */}
 			<div className="flex flex-col gap-3">
 				<SettingField label="Model" description="Which LLM powers this conversation. Inherited by workers and branches unless overridden below.">
-					<Select
+					<SelectRoot
 						value={currentSettings.model || defaults.model}
 						onValueChange={(value) =>
 							onChange({ ...currentSettings, model: value })
@@ -234,14 +234,14 @@ export function ConversationSettingsPanel({
 								),
 							)}
 						</SelectContent>
-					</Select>
+					</SelectRoot>
 				</SettingField>
 
 				<SettingField
 					label="Memory"
 					description={MEMORY_DESCRIPTIONS[currentMemory]}
 				>
-					<Select
+					<SelectRoot
 						value={currentMemory}
 						onValueChange={(value) =>
 							onChange({
@@ -264,14 +264,14 @@ export function ConversationSettingsPanel({
 								</SelectItem>
 							))}
 						</SelectContent>
-					</Select>
+					</SelectRoot>
 				</SettingField>
 
 				<SettingField
 					label="Mode"
 					description={DELEGATION_DESCRIPTIONS[currentDelegation]}
 				>
-					<Select
+					<SelectRoot
 						value={currentDelegation}
 						onValueChange={(value) =>
 							onChange({
@@ -295,14 +295,14 @@ export function ConversationSettingsPanel({
 								</SelectItem>
 							))}
 						</SelectContent>
-					</Select>
+					</SelectRoot>
 				</SettingField>
 
 				<SettingField
 					label="Response"
 					description={RESPONSE_MODE_DESCRIPTIONS[currentResponseMode]}
 				>
-					<Select
+					<SelectRoot
 						value={currentResponseMode}
 						onValueChange={(value) =>
 							onChange({
@@ -326,7 +326,7 @@ export function ConversationSettingsPanel({
 								</SelectItem>
 							))}
 						</SelectContent>
-					</Select>
+					</SelectRoot>
 				</SettingField>
 			</div>
 
@@ -356,7 +356,7 @@ export function ConversationSettingsPanel({
 									process.slice(1)
 								}
 							>
-								<Select
+								<SelectRoot
 									value={
 										currentSettings.model_overrides?.[
 											process
@@ -406,7 +406,7 @@ export function ConversationSettingsPanel({
 											),
 										)}
 									</SelectContent>
-								</Select>
+								</SelectRoot>
 							</SettingRow>
 						),
 					)}
@@ -418,7 +418,7 @@ export function ConversationSettingsPanel({
 						<div />
 					</SettingField>
 					<SettingRow label="History">
-						<Select
+						<SelectRoot
 							value={
 								currentSettings.worker_context?.history ||
 								defaults.worker_context.history
@@ -447,11 +447,11 @@ export function ConversationSettingsPanel({
 									</SelectItem>
 								))}
 							</SelectContent>
-						</Select>
+						</SelectRoot>
 					</SettingRow>
 
 					<SettingRow label="Memory">
-						<Select
+						<SelectRoot
 							value={
 								currentSettings.worker_context?.memory ||
 								defaults.worker_context.memory
@@ -480,7 +480,7 @@ export function ConversationSettingsPanel({
 									</SelectItem>
 								))}
 							</SelectContent>
-						</Select>
+						</SelectRoot>
 					</SettingRow>
 				</div>
 			)}

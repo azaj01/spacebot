@@ -13,9 +13,8 @@ import {
 	type RelationType,
 } from "@/api/client";
 import { formatTimeAgo } from "@/lib/format";
-import { Button } from "@/ui";
-import { Target02Icon, PlusSignIcon, MinusSignIcon, RefreshIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Button, CircleButton } from "@spaceui/primitives";
+import { Crosshair, Plus, Minus, ArrowsClockwise, X } from "@phosphor-icons/react";
 
 // -- Constants --
 
@@ -386,58 +385,42 @@ export function MemoryGraph({ agentId, sort, typeFilter }: MemoryGraphProps) {
 
 			{/* Controls */}
 			<div className="absolute right-4 top-4 z-10 flex flex-col gap-1.5">
-			<Button
-				onClick={() => sigmaRef.current?.getCamera().animatedReset()}
-				variant="ghost"
-				size="icon"
-				className="h-8 w-8 bg-app-darkBox/80 backdrop-blur-sm"
-				title="Reset zoom"
-			>
-				<HugeiconsIcon icon={Target02Icon} className="h-4 w-4" />
-			</Button>
-			<Button
-				onClick={() => {
-					const camera = sigmaRef.current?.getCamera();
-					if (camera) camera.animatedZoom({ duration: 200 });
-				}}
-				variant="ghost"
-				size="icon"
-				className="h-8 w-8 bg-app-darkBox/80 backdrop-blur-sm"
-				title="Zoom in"
-			>
-				<HugeiconsIcon icon={PlusSignIcon} className="h-4 w-4" />
-			</Button>
-			<Button
-				onClick={() => {
-					const camera = sigmaRef.current?.getCamera();
-					if (camera) camera.animatedUnzoom({ duration: 200 });
-				}}
-				variant="ghost"
-				size="icon"
-				className="h-8 w-8 bg-app-darkBox/80 backdrop-blur-sm"
-				title="Zoom out"
-			>
-				<HugeiconsIcon icon={MinusSignIcon} className="h-4 w-4" />
-			</Button>
-			<Button
-				onClick={() => {
-					const layout = layoutRef.current;
-					if (layout) {
-						if (layout.isRunning()) {
-							layout.stop();
-						} else {
-							layout.start();
-							setTimeout(() => { if (layout.isRunning()) layout.stop(); }, 3000);
+				<CircleButton
+					icon={Crosshair}
+					onClick={() => sigmaRef.current?.getCamera().animatedReset()}
+					title="Reset zoom"
+				/>
+				<CircleButton
+					icon={Plus}
+					onClick={() => {
+						const camera = sigmaRef.current?.getCamera();
+						if (camera) camera.animatedZoom({ duration: 200 });
+					}}
+					title="Zoom in"
+				/>
+				<CircleButton
+					icon={Minus}
+					onClick={() => {
+						const camera = sigmaRef.current?.getCamera();
+						if (camera) camera.animatedUnzoom({ duration: 200 });
+					}}
+					title="Zoom out"
+				/>
+				<CircleButton
+					icon={ArrowsClockwise}
+					onClick={() => {
+						const layout = layoutRef.current;
+						if (layout) {
+							if (layout.isRunning()) {
+								layout.stop();
+							} else {
+								layout.start();
+								setTimeout(() => { if (layout.isRunning()) layout.stop(); }, 3000);
+							}
 						}
-					}
-				}}
-				variant="ghost"
-				size="icon"
-				className="h-8 w-8 bg-app-darkBox/80 backdrop-blur-sm"
-				title="Re-run layout"
-			>
-				<HugeiconsIcon icon={RefreshIcon} className="h-4 w-4" />
-			</Button>
+					}}
+					title="Re-run layout"
+				/>
 			</div>
 
 			{/* Node detail panel */}
@@ -466,7 +449,7 @@ export function MemoryGraph({ agentId, sort, typeFilter }: MemoryGraphProps) {
 							size="icon"
 							className="h-7 w-7"
 						>
-							<HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
+							<X className="h-3.5 w-3.5" />
 						</Button>
 						</div>
 						<p className="mb-3 max-h-32 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed text-ink-dull">

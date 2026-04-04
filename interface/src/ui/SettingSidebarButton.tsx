@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cx } from "./utils";
+import { cx } from "class-variance-authority";
 
 export interface SettingSidebarButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement> {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, type PresetMeta } from "@/api/client";
-import { Dialog, DialogContent } from "@/ui";
+import { DialogRoot, DialogContent } from "@spaceui/primitives";
 import { CortexChatPanel } from "@/components/CortexChatPanel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -119,7 +119,7 @@ export function CreateAgentDialog({ open, onOpenChange, agentId }: CreateAgentDi
 	}
 
 	return (
-		<Dialog
+		<DialogRoot
 			open={open}
 			onOpenChange={(v) => {
 				if (!v) handleClose();
@@ -183,6 +183,6 @@ export function CreateAgentDialog({ open, onOpenChange, agentId }: CreateAgentDi
 					</div>
 				)}
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }

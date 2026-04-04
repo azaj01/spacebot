@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { api, type SkillInfo, type RegistrySkill, type RegistryView } from "@/api/client";
-import { Button, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/ui";
+import { Button, Badge, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@spaceui/primitives";
 import { clsx } from "clsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -56,7 +56,7 @@ function InstalledSkillDetailModal({
 	});
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
 				<DialogHeader>
 					<div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ function InstalledSkillDetailModal({
 					</div>
 				)}
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 
@@ -130,7 +130,7 @@ function RegistrySkillDetailModal({
 	});
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
 				<DialogHeader>
 					<div className="flex items-center gap-2">
@@ -208,7 +208,7 @@ function RegistrySkillDetailModal({
 
 				{data?.content && <SkillContentBlock content={data.content} />}
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 

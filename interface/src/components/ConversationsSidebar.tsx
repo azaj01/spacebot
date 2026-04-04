@@ -1,13 +1,5 @@
 import {useState} from "react";
-import {Button} from "@/ui/Button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from "@/ui/Dialog";
-import {Input} from "@/ui/Input";
+import {Button, Input, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogFooter} from "@spaceui/primitives";
 import type {PortalConversationSummary} from "@/api/types";
 
 interface ConversationsSidebarProps {
@@ -237,7 +229,7 @@ export function ConversationsSidebar({
 			</div>
 
 			{/* Rename Dialog */}
-			<Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+			<DialogRoot open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Rename Conversation</DialogTitle>
@@ -260,10 +252,10 @@ export function ConversationsSidebar({
 						<Button onClick={confirmRename}>Rename</Button>
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 
 			{/* Delete Dialog */}
-			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+			<DialogRoot open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Delete Conversation</DialogTitle>
@@ -284,7 +276,7 @@ export function ConversationsSidebar({
 						</Button>
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 		</div>
 	);
 }

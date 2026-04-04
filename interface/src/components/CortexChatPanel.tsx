@@ -3,10 +3,8 @@ import {useCortexChat, type ToolActivity} from "@/hooks/useCortexChat";
 import {Markdown} from "@/components/Markdown";
 import {ToolCall, type ToolCallPair} from "@/components/ToolCall";
 import {api, type CortexChatToolCall, type CortexChatThread} from "@/api/client";
-import {Button} from "@/ui";
-import {Popover, PopoverContent, PopoverTrigger} from "@/ui/Popover";
-import {PlusSignIcon, Cancel01Icon, Clock01Icon, Delete02Icon} from "@hugeicons/core-free-icons";
-import {HugeiconsIcon} from "@hugeicons/react";
+import {Button, PopoverRoot, PopoverContent, PopoverTrigger} from "@spaceui/primitives";
+import {Plus, X, Clock, Trash} from "@phosphor-icons/react";
 
 interface CortexChatPanelProps {
 	agentId: string;
@@ -344,7 +342,7 @@ function ThreadList({
 								className="mt-0.5 shrink-0 rounded p-0.5 text-ink-faint opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
 								title="Delete thread"
 							>
-								<HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" />
+								<Trash className="h-3 w-3" />
 							</button>
 						)}
 					</button>
@@ -422,7 +420,7 @@ export function CortexChatPanel({
 						)}
 					</div>
 				<div className="flex items-center gap-0.5">
-					<Popover open={threadListOpen} onOpenChange={setThreadListOpen}>
+					<PopoverRoot open={threadListOpen} onOpenChange={setThreadListOpen}>
 						<PopoverTrigger asChild>
 							<Button
 								variant="ghost"
@@ -431,7 +429,7 @@ export function CortexChatPanel({
 								className="h-7 w-7"
 								title="Thread history"
 							>
-								<HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
+								<Clock className="h-3.5 w-3.5" />
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent
@@ -449,7 +447,7 @@ export function CortexChatPanel({
 								onClose={() => setThreadListOpen(false)}
 							/>
 						</PopoverContent>
-					</Popover>
+					</PopoverRoot>
 					<Button
 						onClick={newThread}
 						variant="ghost"
@@ -458,7 +456,7 @@ export function CortexChatPanel({
 						className="h-7 w-7"
 						title="New thread"
 					>
-						<HugeiconsIcon icon={PlusSignIcon} className="h-3.5 w-3.5" />
+						<Plus className="h-3.5 w-3.5" />
 					</Button>
 					{onClose && (
 						<Button
@@ -468,7 +466,7 @@ export function CortexChatPanel({
 							className="h-7 w-7"
 							title="Close"
 						>
-							<HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
+							<X className="h-3.5 w-3.5" />
 						</Button>
 					)}
 				</div>

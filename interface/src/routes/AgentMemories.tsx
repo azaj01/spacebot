@@ -12,18 +12,17 @@ import {
 import { CortexChatPanel } from "@/components/CortexChatPanel";
 import { MemoryGraph } from "@/components/MemoryGraph";
 import {
-	Button,
-	DropdownMenu,
+	CircleButton,
+	CircleButtonGroup,
+	DropdownMenuRoot,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-	ToggleGroup,
 	SearchInput,
 	FilterButton,
-} from "@/ui";
+} from "@spaceui/primitives";
 import { formatTimeAgo } from "@/lib/format";
-import { ArrowDown01Icon, LeftToRightListBulletIcon, WorkflowSquare01Icon, IdeaIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { CaretDown, List, TreeStructure, Lightbulb } from "@phosphor-icons/react";
 
 type ViewMode = "list" | "graph";
 
@@ -156,10 +155,10 @@ export function AgentMemories({ agentId }: AgentMemoriesProps) {
 				/>
 
 				{/* Sort dropdown */}
-				<DropdownMenu>
+				<DropdownMenuRoot>
 				<DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md border border-app-line bg-app-darkBox px-2.5 py-1.5 text-sm text-ink-dull transition-colors hover:bg-app-selected hover:text-ink data-[state=open]:bg-app-selected data-[state=open]:text-ink">
 					{SORT_OPTIONS.find((o) => o.value === sort)?.label ?? sort}
-					<HugeiconsIcon icon={ArrowDown01Icon} className="h-3 w-3 text-ink-faint" />
+					<CaretDown className="h-3 w-3 text-ink-faint" />
 				</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						{SORT_OPTIONS.map((option) => (
@@ -172,30 +171,31 @@ export function AgentMemories({ agentId }: AgentMemoriesProps) {
 							</DropdownMenuItem>
 						))}
 					</DropdownMenuContent>
-				</DropdownMenu>
+				</DropdownMenuRoot>
 
 			{/* View mode toggle */}
-			<ToggleGroup
-				value={viewMode}
-				onChange={setViewMode}
-				options={[
-					{ value: "list", label: <HugeiconsIcon icon={LeftToRightListBulletIcon} className="h-3.5 w-3.5" />, title: "List view" },
-					{ value: "graph", label: <HugeiconsIcon icon={WorkflowSquare01Icon} className="h-3.5 w-3.5" />, title: "Graph view" },
-				]}
-			/>
+			<CircleButtonGroup>
+				<CircleButton
+					icon={List}
+					onClick={() => setViewMode("list")}
+					variant={viewMode === "list" ? "active" : "default"}
+					title="List view"
+				/>
+				<CircleButton
+					icon={TreeStructure}
+					onClick={() => setViewMode("graph")}
+					variant={viewMode === "graph" ? "active" : "default"}
+					title="Graph view"
+				/>
+			</CircleButtonGroup>
 
 			{/* Cortex chat toggle */}
-			<div className="flex overflow-hidden rounded-md border border-app-line bg-app-darkBox">
-				<Button
-					onClick={() => setChatOpen(!chatOpen)}
-					variant={chatOpen ? "secondary" : "ghost"}
-					size="icon"
-					className={chatOpen ? "bg-app-selected text-ink" : ""}
-					title="Toggle cortex chat"
-				>
-					<HugeiconsIcon icon={IdeaIcon} className="h-4 w-4" />
-				</Button>
-			</div>
+			<CircleButton
+				icon={Lightbulb}
+				onClick={() => setChatOpen(!chatOpen)}
+				variant={chatOpen ? "accent" : "default"}
+				title="Toggle cortex chat"
+			/>
 			</div>
 
 			{/* Type filter pills */}
@@ -274,10 +274,10 @@ export function AgentMemories({ agentId }: AgentMemoriesProps) {
 											className="absolute left-0 top-0 w-full"
 											style={{ transform: `translateY(${virtualRow.start}px)` }}
 										>
-										<Button
+										<button
+											type="button"
 											onClick={() => setExpandedId(isExpanded ? null : memory.id)}
-											variant="ghost"
-											className="grid h-auto w-full grid-cols-[80px_1fr_100px_120px_100px] items-center gap-3 rounded-none px-6 py-3 text-left hover:bg-app-darkBox/30"
+											className="grid w-full grid-cols-[80px_1fr_100px_120px_100px] items-center gap-3 px-6 py-3 text-left transition-colors hover:bg-app-hover"
 										>
 												<TypeBadge type={memory.memory_type} />
 												<div className="min-w-0">
@@ -297,7 +297,7 @@ export function AgentMemories({ agentId }: AgentMemoriesProps) {
 												<span className="text-tiny text-ink-faint">
 													{formatTimeAgo(memory.created_at)}
 												</span>
-											</Button>
+											</button>
 
 											{/* Expanded detail */}
 											<AnimatePresence>

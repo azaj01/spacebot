@@ -1,8 +1,7 @@
 import {useMemo, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {Link} from "@tanstack/react-router";
-import {SparklesIcon, IdeaIcon} from "@hugeicons/core-free-icons";
-import {HugeiconsIcon} from "@hugeicons/react";
+import {Sparkle, Lightbulb} from "@phosphor-icons/react";
 import {api} from "@/api/client";
 import {CreateAgentDialog} from "@/components/CreateAgentDialog";
 import {TopologyGraph} from "@/components/TopologyGraph";
@@ -159,7 +158,7 @@ export function Overview({liveStates, activeLinks}: OverviewProps) {
 											search={{tab: "providers"}}
 											className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow hover:bg-accent/90 transition-colors"
 										>
-											<HugeiconsIcon icon={SparklesIcon} className="h-4 w-4" />
+											<Sparkle className="h-4 w-4" />
 											Add LLM Provider
 										</Link>
 										<a
@@ -173,7 +172,7 @@ export function Overview({liveStates, activeLinks}: OverviewProps) {
 									</div>
 								</div>
 								<div className="flex items-start gap-3 rounded-lg border border-app-line bg-app-darkBox/50 px-4 py-3 text-left">
-									<HugeiconsIcon icon={IdeaIcon} className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+									<Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
 									<p className="text-tiny text-ink-faint leading-relaxed">
 										<span className="font-medium text-ink-dull">Pro tip:</span>{" "}
 										Once set up, you can talk to the Cortex from any agent page to get help with configuration, debugging, or learning how Spacebot works.

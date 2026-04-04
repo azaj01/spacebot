@@ -11,12 +11,11 @@ import {
 	type OpenCodePart,
 } from "@/api/client";
 import {ToolCall, pairTranscriptSteps, openCodePartToPair} from "@/components/ToolCall";
-import {Badge} from "@/ui/Badge";
+import {Badge, badgeVariants} from "@spaceui/primitives";
 import {formatTimeAgo, formatDuration} from "@/lib/format";
 import {LiveDuration} from "@/components/LiveDuration";
 import {useLiveContext} from "@/hooks/useLiveContext";
-import {cx} from "@/ui/utils";
-import {badgeStyles} from "@/ui/Badge";
+import { cx } from "class-variance-authority";
 import {ProviderIcon} from "@/lib/providerIcons";
 
 import {OpenCodeEmbed, base64UrlEncode} from "@/components/OpenCodeEmbed";
@@ -647,7 +646,7 @@ function OpenCodeDirectLink({
 			href={href}
 			target="_blank"
 			rel="noopener noreferrer"
-			className={cx(badgeStyles({ variant: "outline", size: "sm" }), "w-fit")}
+			className={cx(badgeVariants({ variant: "outline", size: "sm" }), "w-fit")}
 		>
 			<ProviderIcon provider="opencode-zen" size={12} className="text-current" />
 			OpenCode ::{port}

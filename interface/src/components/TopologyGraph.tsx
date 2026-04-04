@@ -35,7 +35,8 @@ import {
 	type LinkDirection,
 	type LinkKind,
 } from "@/api/client";
-import { Button, Input, TextArea, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, cx } from "@/ui";
+import { Button, Input, TextArea, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@spaceui/primitives";
+import { cx } from "class-variance-authority";
 import { Markdown } from "@/components/Markdown";
 import { Link } from "@tanstack/react-router";
 
@@ -587,7 +588,7 @@ function HumanEditDialog({
 	if (!human) return null;
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="!max-w-5xl !w-[90vw] !h-[85vh] !flex !flex-col !gap-0 !p-0 overflow-hidden">
 				<div className="flex items-center justify-between border-b border-app-line/50 px-5 py-4 shrink-0">
 					<div className="flex items-baseline gap-2">
@@ -742,7 +743,7 @@ function HumanEditDialog({
 					</div>
 				</div>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 
@@ -774,7 +775,7 @@ function AgentEditDialog({
 	if (!agent) return null;
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-sm">
 				<DialogHeader>
 					<DialogTitle>Edit Agent</DialogTitle>
@@ -810,7 +811,7 @@ function AgentEditDialog({
 					</Button>
 				</DialogFooter>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 

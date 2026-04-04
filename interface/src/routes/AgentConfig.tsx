@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type AgentConfigResponse, type AgentConfigUpdateRequest } from "@/api/client";
-import { Button, Input, SettingSidebarButton, TextArea, Toggle, NumberStepper, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, cx } from "@/ui";
+import { Button, Input, TextArea, NumberStepper, SelectRoot, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@spaceui/primitives";
+import { SettingSidebarButton } from "@/ui/SettingSidebarButton";
+import { Toggle } from "@/ui/Toggle";
+import { cx } from "class-variance-authority";
 import { ModelSelect } from "@/components/ModelSelect";
 import { TagInput } from "@/components/TagInput";
 import { Markdown } from "@/components/Markdown";
@@ -894,7 +897,7 @@ function ConfigSectionEditor({ sectionId, label, description, detail, config, on
 								{supportsAdaptiveThinking(localValues[key] as string) && (
 									<div className="ml-4 flex flex-col gap-1">
 										<label className="text-xs font-medium text-ink-dull">Thinking Effort</label>
-										<Select
+										<SelectRoot
 											value={(localValues[`${key}_thinking_effort`] as string) || "auto"}
 											onValueChange={(value) => handleChange(`${key}_thinking_effort`, value)}
 										>
@@ -908,7 +911,7 @@ function ConfigSectionEditor({ sectionId, label, description, detail, config, on
 												<SelectItem value="medium">Medium</SelectItem>
 												<SelectItem value="low">Low</SelectItem>
 											</SelectContent>
-										</Select>
+										</SelectRoot>
 									</div>
 								)}
 							</div>
@@ -1172,7 +1175,7 @@ function ConfigSectionEditor({ sectionId, label, description, detail, config, on
 						<div className="flex flex-col gap-1.5">
 							<label className="text-sm font-medium text-ink">Close Policy</label>
 							<p className="text-tiny text-ink-faint">What happens when a worker calls &quot;close&quot; or finishes.</p>
-							<Select
+							<SelectRoot
 								value={localValues.close_policy as string}
 								onValueChange={(v) => handleChange("close_policy", v)}
 							>
@@ -1184,7 +1187,7 @@ function ConfigSectionEditor({ sectionId, label, description, detail, config, on
 									<SelectItem value="close_tabs">Close Tabs</SelectItem>
 									<SelectItem value="detach">Detach</SelectItem>
 								</SelectContent>
-							</Select>
+							</SelectRoot>
 						</div>
 					</div>
 				);
@@ -1194,7 +1197,7 @@ function ConfigSectionEditor({ sectionId, label, description, detail, config, on
 						<div className="flex flex-col gap-1.5">
 							<label className="text-sm font-medium text-ink">Mode</label>
 							<p className="text-tiny text-ink-faint">Kernel-enforced filesystem containment for shell subprocesses.</p>
-							<Select
+							<SelectRoot
 								value={localValues.mode as string}
 								onValueChange={(v) => handleChange("mode", v)}
 							>
@@ -1205,7 +1208,7 @@ function ConfigSectionEditor({ sectionId, label, description, detail, config, on
 									<SelectItem value="enabled">Enabled</SelectItem>
 									<SelectItem value="disabled">Disabled</SelectItem>
 								</SelectContent>
-							</Select>
+							</SelectRoot>
 						</div>
 						<div className="flex flex-col gap-1.5">
 						<label className="text-sm font-medium text-ink">Extra Allowed Paths</label>

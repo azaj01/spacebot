@@ -2,26 +2,25 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type CronJobWithStats, type CreateCronRequest, type ChannelInfo } from "@/api/client";
 import { formatCronSchedule, formatTimeAgo } from "@/lib/format";
-import { Clock05Icon, PauseIcon, PlayIcon, FlashIcon, PencilEdit02Icon, Delete02Icon, ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Clock, Pause, Play, Lightning, PencilSimple, Trash, CaretDown, CaretUp } from "@phosphor-icons/react";
 import {
 	Button,
-	Dialog,
+	DialogRoot,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	Badge,
 	Input,
 	TextArea,
-	Toggle,
 	Label,
 	NumberStepper,
-	Select,
+	SelectRoot,
 	SelectTrigger,
 	SelectValue,
 	SelectContent,
 	SelectItem,
-} from "@/ui";
+} from "@spaceui/primitives";
+import { Toggle } from "@/ui/Toggle";
 
 // -- Helpers --
 
@@ -280,7 +279,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 					<div className="flex h-full items-start justify-center pt-[15vh]">
 						<div className="flex max-w-sm flex-col items-center rounded-xl border border-dashed border-app-line/50 bg-app-darkBox/20 p-8 text-center">
 							<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-app-line bg-app-darkBox">
-								<HugeiconsIcon icon={Clock05Icon} className="h-6 w-6 text-ink-faint" />
+								<Clock className="h-6 w-6 text-ink-faint" />
 							</div>
 							<h3 className="mb-1 font-plex text-sm font-medium text-ink">No cron jobs yet</h3>
 							<p className="mb-5 max-w-md text-sm text-ink-faint">
@@ -317,7 +316,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 			</div>
 
 			{/* Create / Edit Modal */}
-			<Dialog open={isModalOpen} onOpenChange={(open) => !open && closeModal()}>
+			<DialogRoot open={isModalOpen} onOpenChange={(open) => !open && closeModal()}>
 				<DialogContent className="!max-w-4xl">
 					<DialogHeader>
 						<DialogTitle>{editingJob ? "Edit Cron Job" : "Create Cron Job"}</DialogTitle>
@@ -413,7 +412,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 													max={999}
 													variant="compact"
 												/>
-												<Select
+												<SelectRoot
 													value={formData.interval_unit}
 													onValueChange={(value) =>
 														setFormData((d) => ({ ...d, interval_unit: value as "minutes" | "hours" | "days" }))
@@ -427,7 +426,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 														<SelectItem value="hours">hours</SelectItem>
 														<SelectItem value="days">days</SelectItem>
 													</SelectContent>
-												</Select>
+												</SelectRoot>
 											</div>
 											<p className="mt-1 text-tiny text-ink-faint">May drift. Prefer cron expressions.</p>
 										</div>
@@ -439,7 +438,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 						{/* Right column — delivery & options */}
 						<div className="flex flex-col gap-4">
 							<Field label="Delivery Target">
-								<Select
+								<SelectRoot
 									value={formData.delivery_target}
 									onValueChange={(value) => {
 										if (value === "__custom__") {
@@ -461,7 +460,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 										))}
 										<SelectItem value="__custom__">Custom...</SelectItem>
 									</SelectContent>
-								</Select>
+								</SelectRoot>
 								{(formData.delivery_target === "" || !deliveryTargets.some((t) => t.value === formData.delivery_target)) && (
 									<Input
 										value={formData.delivery_target}
@@ -536,10 +535,10 @@ export function AgentCron({ agentId }: AgentCronProps) {
 						</Button>
 					</div>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 
 			{/* Delete Confirmation */}
-			<Dialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+			<DialogRoot open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Delete Cron Job?</DialogTitle>
@@ -565,7 +564,7 @@ export function AgentCron({ agentId }: AgentCronProps) {
 						</Button>
 					</div>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 		</div>
 	);
 }
@@ -694,7 +693,7 @@ function CronJobCard({
 						variant="ghost"
 						size="sm"
 					>
-						<HugeiconsIcon icon={job.enabled ? PauseIcon : PlayIcon} className="h-3.5 w-3.5" />
+						{job.enabled ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
 					</Button>
 					<Button
 						title="Run now"
@@ -703,13 +702,13 @@ function CronJobCard({
 						variant="ghost"
 						size="sm"
 					>
-						<HugeiconsIcon icon={FlashIcon} className="h-3.5 w-3.5" />
+						<Lightning className="h-3.5 w-3.5" />
 					</Button>
 					<Button title="Edit" onClick={onEdit} variant="ghost" size="sm">
-						<HugeiconsIcon icon={PencilEdit02Icon} className="h-3.5 w-3.5" />
+						<PencilSimple className="h-3.5 w-3.5" />
 					</Button>
 					<Button title="Delete" onClick={onDelete} variant="ghost" size="sm" className="hover:text-red-400">
-						<HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5" />
+						<Trash className="h-3.5 w-3.5" />
 					</Button>
 				</div>
 			</div>
@@ -727,7 +726,7 @@ function CronJobCard({
 				onClick={onToggleExpand}
 				className="flex w-full items-center justify-center gap-1.5 border-t border-app-line/50 px-3 py-1.5 text-tiny text-ink-faint transition-colors hover:bg-app-lightBox/30 hover:text-ink-dull"
 			>
-				<HugeiconsIcon icon={isExpanded ? ArrowUp01Icon : ArrowDown01Icon} className="h-3 w-3" />
+				{isExpanded ? <CaretUp className="h-3 w-3" /> : <CaretDown className="h-3 w-3" />}
 				{isExpanded ? "Hide history" : "Show history"}
 			</button>
 		</div>

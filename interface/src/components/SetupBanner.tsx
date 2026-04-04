@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { api } from "@/api/client";
-import { Banner } from "@/ui";
+import { Banner } from "@spaceui/primitives";
 
 export function SetupBanner() {
 	const { data } = useQuery({

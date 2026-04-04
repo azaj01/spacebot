@@ -5,7 +5,7 @@ import {useAudioRecorder} from "@/hooks/useAudioRecorder";
 import {useTtsPlayback} from "@/hooks/useTtsPlayback";
 import {getPortalSessionId} from "@/hooks/usePortal";
 import {useEventSource} from "@/hooks/useEventSource";
-import {cx} from "@/ui/utils";
+import { cx } from "class-variance-authority";
 import {IS_TAURI, resizeWindow, listen as platformListen} from "@/platform";
 
 const Orb = lazy(() => import("@/components/Orb"));

@@ -5,7 +5,8 @@ import {
 	type PromptInspectResponse,
 	type PromptSnapshotSummary,
 } from "@/api/client";
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Toggle } from "@/ui";
+import { Button, DialogRoot, DialogContent, DialogHeader, DialogTitle } from "@spaceui/primitives";
+import { Toggle } from "@/ui/Toggle";
 
 interface PromptInspectModalProps {
 	open: boolean;
@@ -64,7 +65,7 @@ export function PromptInspectModal({ open, onOpenChange, channelId }: PromptInsp
 	const contentLoading = view === "current" ? isLoading : snapshotLoading;
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="!flex h-[85vh] max-w-5xl !flex-col !gap-0 overflow-hidden !p-0">
 				<DialogHeader className="flex-shrink-0 border-b border-app-line/50 px-6 pt-6 pb-4">
 					<DialogTitle>Prompt Inspector</DialogTitle>
@@ -180,7 +181,7 @@ export function PromptInspectModal({ open, onOpenChange, channelId }: PromptInsp
 					</Button>
 				</div>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 

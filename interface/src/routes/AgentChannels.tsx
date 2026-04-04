@@ -2,10 +2,9 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api/client";
 import { ChannelCard } from "@/components/ChannelCard";
-import { Button, SearchInput } from "@/ui";
+import { Button, SearchInput } from "@spaceui/primitives";
 import type { ChannelLiveState } from "@/hooks/useChannelLiveState";
-import { Settings02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { GearSix } from "@phosphor-icons/react";
 import { useNavigate } from "@tanstack/react-router";
 
 interface AgentChannelsProps {
@@ -71,7 +70,7 @@ export function AgentChannels({ agentId, liveStates }: AgentChannelsProps) {
 					<div className="flex h-full items-start justify-center pt-[15vh]">
 						<div className="flex max-w-sm flex-col items-center rounded-xl border border-dashed border-app-line/50 bg-app-darkBox/20 p-8 text-center">
 							<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-app-line bg-app-darkBox">
-								<HugeiconsIcon icon={Settings02Icon} className="h-6 w-6 text-ink-faint" />
+								<GearSix className="h-6 w-6 text-ink-faint" />
 							</div>
 							<h3 className="mb-1 font-plex text-sm font-medium text-ink">No channels yet</h3>
 							<p className="mb-5 max-w-md text-sm text-ink-faint">

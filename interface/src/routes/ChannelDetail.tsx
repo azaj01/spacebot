@@ -8,9 +8,8 @@ import { LiveDuration } from "@/components/LiveDuration";
 import { Markdown } from "@/components/Markdown";
 import { PromptInspectModal } from "@/components/PromptInspectModal";
 import { formatTimestamp, platformIcon, platformColor } from "@/lib/format";
-import { Button } from "@/ui";
-import { Cancel01Icon, IdeaIcon, CodeIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Button } from "@spaceui/primitives";
+import { X, Lightbulb, Code } from "@phosphor-icons/react";
 
 interface ChannelDetailProps {
 	agentId: string;
@@ -36,7 +35,7 @@ function CancelButton({ onClick, className }: { onClick: () => void; className?:
 			className={`h-7 w-7 flex-shrink-0 text-ink-faint/50 hover:bg-red-500/15 hover:text-red-400 ${className ?? ""}`}
 			title="Cancel"
 		>
-			<HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
+			<X className="h-3.5 w-3.5" />
 		</Button>
 	);
 }
@@ -390,7 +389,7 @@ export function ChannelDetail({ agentId, channelId, channel, liveState, onLoadMo
 								size="icon"
 								title="Inspect prompt"
 							>
-								<HugeiconsIcon icon={CodeIcon} className="h-4 w-4" />
+								<Code className="h-4 w-4" />
 							</Button>
 							<Button
 								onClick={() => setCortexOpen(!cortexOpen)}
@@ -399,7 +398,7 @@ export function ChannelDetail({ agentId, channelId, channel, liveState, onLoadMo
 								className={cortexOpen ? "bg-app-selected text-ink" : ""}
 								title="Toggle cortex chat"
 							>
-								<HugeiconsIcon icon={IdeaIcon} className="h-4 w-4" />
+								<Lightbulb className="h-4 w-4" />
 							</Button>
 						</div>
 					</div>

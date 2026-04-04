@@ -10,15 +10,7 @@ import {
   type CreateTaskRequest,
 } from "@/api/client";
 import { useLiveContext } from "@/hooks/useLiveContext";
-import { Badge } from "@/ui/Badge";
-import { Button } from "@/ui/Button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/ui/Dialog";
+import { Badge, Button, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@spaceui/primitives";
 import { Markdown } from "@/components/Markdown";
 import { formatTimeAgo } from "@/lib/format";
 import { AnimatePresence, motion } from "framer-motion";
@@ -608,7 +600,7 @@ function CreateTaskDialog({
   }, [title, description, priority, status, ownerAgentId, isPending, onCreate]);
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <DialogRoot open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Task</DialogTitle>
@@ -682,7 +674,7 @@ function CreateTaskDialog({
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   );
 }
 
@@ -710,7 +702,7 @@ function TaskDetailDialog({
   onStatusChange: (status: TaskStatus) => void;
 }) {
   return (
-    <Dialog open={true} onOpenChange={(v) => !v && onClose()}>
+    <DialogRoot open={true} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="!flex max-h-[85vh] max-w-lg !flex-col overflow-hidden">
         <DialogHeader className="shrink-0">
           <DialogTitle>
@@ -871,6 +863,6 @@ function TaskDetailDialog({
           </div>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogRoot>
   );
 }

@@ -10,18 +10,18 @@ import {
 import {
 	Button,
 	Input,
-	Select,
+	SelectRoot,
 	SelectTrigger,
 	SelectValue,
 	SelectContent,
 	SelectItem,
-	Dialog,
+	DialogRoot,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogFooter,
-	Toggle,
-} from "@/ui";
+} from "@spaceui/primitives";
+import { Toggle } from "@/ui/Toggle";
 import {PlatformIcon} from "@/lib/platformIcons";
 import {isValidE164, E164_ERROR_TEXT, validateSignalDmAllowedUsers} from "@/lib/format";
 import {TagInput} from "@/components/TagInput";
@@ -457,7 +457,7 @@ export function InstanceCard({instance, expanded, onToggleExpand}: InstanceCardP
 								)}
 
 								{/* Add/Edit binding modal */}
-								<Dialog
+								<DialogRoot
 									open={isEditingOrAdding}
 									onOpenChange={(open) => {
 										if (!open) {
@@ -488,7 +488,7 @@ export function InstanceCard({instance, expanded, onToggleExpand}: InstanceCardP
 											saving={editingBinding ? updateBindingMutation.isPending : addBindingMutation.isPending}
 										/>
 									</DialogContent>
-								</Dialog>
+								</DialogRoot>
 							</div>
 
 							{/* Status message */}
@@ -1110,7 +1110,7 @@ function BindingForm({
 		<div className="flex flex-col gap-3">
 			<div>
 				<label className="mb-1 block text-sm font-medium text-ink-dull">Agent</label>
-				<Select
+				<SelectRoot
 					value={bindingForm.agent_id}
 					onValueChange={(v) => setBindingForm({...bindingForm, agent_id: v})}
 				>
@@ -1120,7 +1120,7 @@ function BindingForm({
 							<SelectItem key={a.id} value={a.id}>{a.id}</SelectItem>
 						)) ?? <SelectItem value="main">main</SelectItem>}
 					</SelectContent>
-				</Select>
+				</SelectRoot>
 			</div>
 
 			{platform === "discord" && (

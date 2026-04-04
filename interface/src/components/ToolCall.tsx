@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cx } from "@/ui/utils";
+import { cx } from "class-variance-authority";
 import type { TranscriptStep, OpenCodePart } from "@/api/client";
 
 // ---------------------------------------------------------------------------

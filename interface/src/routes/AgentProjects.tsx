@@ -8,16 +8,7 @@ import {
 	type CreateProjectRequest,
 	type CreateWorktreeRequest,
 } from "@/api/client";
-import { Badge, Button } from "@/ui";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	DialogDescription,
-} from "@/ui/Dialog";
-import { Input, Label, TextArea } from "@/ui/Input";
+import { Badge, Button, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription, Input, Label, TextArea } from "@spaceui/primitives";
 import { formatTimeAgo } from "@/lib/format";
 import { clsx } from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
@@ -159,7 +150,7 @@ function CreateProjectDialog({
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Create Project</DialogTitle>
@@ -233,7 +224,7 @@ function CreateProjectDialog({
 					</DialogFooter>
 				</form>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 
@@ -292,7 +283,7 @@ function CreateWorktreeDialog({
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Create Worktree</DialogTitle>
@@ -350,7 +341,7 @@ function CreateWorktreeDialog({
 					</DialogFooter>
 				</form>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 
@@ -374,7 +365,7 @@ function DeleteDialog({
 	isPending: boolean;
 }) {
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
@@ -393,7 +384,7 @@ function DeleteDialog({
 					</Button>
 				</DialogFooter>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }
 

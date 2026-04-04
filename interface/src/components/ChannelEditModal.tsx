@@ -5,17 +5,17 @@ import {isValidE164, E164_ERROR_TEXT, validateSignalDmAllowedUsers} from "@/lib/
 import {
 	Button,
 	Input,
-	Dialog,
+	DialogRoot,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogDescription,
-	Select,
+	SelectRoot,
 	SelectTrigger,
 	SelectValue,
 	SelectContent,
 	SelectItem,
-} from "@/ui";
+} from "@spaceui/primitives";
 import {PlatformIcon} from "@/lib/platformIcons";
 import {TagInput} from "@/components/TagInput";
 
@@ -263,7 +263,7 @@ export function ChannelEditModal({platform, name, status, open, onOpenChange}: C
 	const isEditingOrAdding = editingBinding !== null || addingBinding;
 
 	return (
-		<Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
+		<DialogRoot open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
 			<DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
@@ -514,14 +514,14 @@ export function ChannelEditModal({platform, name, status, open, onOpenChange}: C
 							<div className="flex flex-col gap-3 rounded-md border border-app-line bg-app-darkBox/30 p-3">
 								<div>
 									<label className="mb-1 block text-sm font-medium text-ink-dull">Agent</label>
-									<Select value={bindingForm.agent_id} onValueChange={(v) => setBindingForm({...bindingForm, agent_id: v})}>
+									<SelectRoot value={bindingForm.agent_id} onValueChange={(v) => setBindingForm({...bindingForm, agent_id: v})}>
 										<SelectTrigger><SelectValue /></SelectTrigger>
 										<SelectContent>
 											{agentsData?.agents?.map((a) => (
 												<SelectItem key={a.id} value={a.id}>{a.id}</SelectItem>
 											)) ?? <SelectItem value="main">main</SelectItem>}
 										</SelectContent>
-									</Select>
+									</SelectRoot>
 								</div>
 
 								{platform === "discord" && (
@@ -657,6 +657,6 @@ export function ChannelEditModal({platform, name, status, open, onOpenChange}: C
 					</div>
 				)}
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }

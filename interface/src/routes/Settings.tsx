@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type GlobalSettingsResponse, type UpdateStatus, type SecretCategory, type SecretListItem, type StoreState } from "@/api/client";
-import { Badge, Button, Input, SettingSidebarButton, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Toggle } from "@/ui";
+import { Badge, Button, Input, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, SelectRoot, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@spaceui/primitives";
+import { SettingSidebarButton } from "@/ui/SettingSidebarButton";
+import { Toggle } from "@/ui/Toggle";
 import { useSearch, useNavigate } from "@tanstack/react-router";
 import { PlatformCatalog, InstanceCard, AddInstanceCard } from "@/components/ChannelSettingCard";
 import { ModelSelect } from "@/components/ModelSelect";
@@ -848,7 +850,7 @@ export function Settings() {
 				</div>
 			</div>
 
-			<Dialog open={!!editingProvider} onOpenChange={(open) => { if (!open) handleClose(); }}>
+			<DialogRoot open={!!editingProvider} onOpenChange={(open) => { if (!open) handleClose(); }}>
 				<DialogContent className="max-w-md">
 					<DialogHeader>
 						<DialogTitle>
@@ -1053,7 +1055,7 @@ export function Settings() {
 						)}
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 		</div>
 	);
 }
@@ -1097,11 +1099,14 @@ function AppearanceSection() {
 }
 
 function ThemePreview({ themeId }: { themeId: ThemeId }) {
-	const colors = {
-		default: { bg: "#0d0d0f", sidebar: "#0a0a0b", accent: "#a855f7" },
-		vanilla: { bg: "#ffffff", sidebar: "#f5f5f6", accent: "#3b82f6" },
-		midnight: { bg: "#14162b", sidebar: "#0c0e1a", accent: "#3b82f6" },
-		noir: { bg: "#080808", sidebar: "#000000", accent: "#3b82f6" },
+	const colors: Record<ThemeId, { bg: string; sidebar: string; accent: string }> = {
+		default: { bg: "#1c1d26", sidebar: "#101118", accent: "#2499ff" },
+		vanilla: { bg: "#ffffff", sidebar: "#f5f5f6", accent: "#2499ff" },
+		midnight: { bg: "#121428", sidebar: "#0a0b14", accent: "#2499ff" },
+		noir: { bg: "#080808", sidebar: "#000000", accent: "#2499ff" },
+		slate: { bg: "#151619", sidebar: "#0e0f12", accent: "#2499ff" },
+		nord: { bg: "#1a1e27", sidebar: "#11141b", accent: "#2499ff" },
+		mocha: { bg: "#1a1614", sidebar: "#110f0d", accent: "#2499ff" },
 	};
 	const c = colors[themeId];
 
@@ -1633,7 +1638,7 @@ function SecretsSection() {
 			)}
 
 			{/* ── Add / Edit Dialog ─────────────────────────────────────── */}
-			<Dialog
+			<DialogRoot
 				open={addDialogOpen || !!editingSecret}
 				onOpenChange={(open) => {
 					if (!open) {
@@ -1684,7 +1689,7 @@ function SecretsSection() {
 
 					<div className="space-y-1.5">
 						<label className="text-sm font-medium text-ink">Category</label>
-						<Select
+						<SelectRoot
 							value={categoryInput}
 							onValueChange={(value) => setCategoryInput(value as SecretCategory)}
 						>
@@ -1699,7 +1704,7 @@ function SecretsSection() {
 									System — internal only, never exposed
 								</SelectItem>
 							</SelectContent>
-						</Select>
+						</SelectRoot>
 						<p className="text-tiny text-ink-faint">
 							{categoryInput === "tool"
 								? "Workers will have access to this credential via environment variable."
@@ -1725,10 +1730,10 @@ function SecretsSection() {
 						</Button>
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 
 			{/* ── Delete Confirmation ───────────────────────────────────── */}
-			<Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
+			<DialogRoot open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
 				<DialogContent className="max-w-sm">
 					<DialogHeader>
 						<DialogTitle>Delete Secret</DialogTitle>
@@ -1751,10 +1756,10 @@ function SecretsSection() {
 						</Button>
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 
 			{/* ── Enable Encryption / Master Key Display Dialog ─────────── */}
-			<Dialog
+			<DialogRoot
 				open={encryptDialogOpen}
 				onOpenChange={(open) => {
 					if (!open) {
@@ -1830,10 +1835,10 @@ function SecretsSection() {
 						</>
 					)}
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 
 			{/* ── Rotate Key Confirmation ───────────────────────────────── */}
-			<Dialog open={rotateDialogOpen} onOpenChange={(open) => { if (!open) setRotateDialogOpen(false); }}>
+			<DialogRoot open={rotateDialogOpen} onOpenChange={(open) => { if (!open) setRotateDialogOpen(false); }}>
 				<DialogContent className="max-w-sm">
 					<DialogHeader>
 						<DialogTitle>Rotate Master Key</DialogTitle>
@@ -1855,7 +1860,7 @@ function SecretsSection() {
 						</Button>
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 		</div>
 	);
 }
@@ -1965,7 +1970,7 @@ function ApiKeysSection({ settings, isLoading }: GlobalSettingsSectionProps) {
 				</div>
 			)}
 
-			<Dialog open={editingBraveKey} onOpenChange={(open) => { if (!open) setEditingBraveKey(false); }}>
+			<DialogRoot open={editingBraveKey} onOpenChange={(open) => { if (!open) setEditingBraveKey(false); }}>
 				<DialogContent className="max-w-md">
 					<DialogHeader>
 						<DialogTitle>{settings?.brave_search_key ? "Update" : "Add"} Brave Search Key</DialogTitle>
@@ -1997,7 +2002,7 @@ function ApiKeysSection({ settings, isLoading }: GlobalSettingsSectionProps) {
 						</Button>
 					</DialogFooter>
 				</DialogContent>
-			</Dialog>
+			</DialogRoot>
 		</div>
 	);
 }
@@ -2433,7 +2438,7 @@ function OpenCodeSection({ settings, isLoading }: GlobalSettingsSectionProps) {
 									] as const).map(({ label, value, setter }) => (
 										<div key={label} className="flex items-center justify-between">
 											<span className="text-sm text-ink">{label}</span>
-											<Select value={value} onValueChange={(v) => setter(v)}>
+											<SelectRoot value={value} onValueChange={(v) => setter(v)}>
 												<SelectTrigger className="w-28">
 													<SelectValue />
 												</SelectTrigger>
@@ -2444,7 +2449,7 @@ function OpenCodeSection({ settings, isLoading }: GlobalSettingsSectionProps) {
 														</SelectItem>
 													))}
 												</SelectContent>
-											</Select>
+											</SelectRoot>
 										</div>
 									))}
 								</div>
@@ -3147,7 +3152,7 @@ function ChatGptOAuthDialog({
 	onRestart,
 }: ChatGptOAuthDialogProps) {
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogRoot open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
@@ -3275,6 +3280,6 @@ function ChatGptOAuthDialog({
 					)}
 				</DialogFooter>
 			</DialogContent>
-		</Dialog>
+		</DialogRoot>
 	);
 }

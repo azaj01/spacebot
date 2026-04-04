@@ -8,9 +8,8 @@ import {
 } from "@/api/client";
 import { CortexChatPanel } from "@/components/CortexChatPanel";
 import { formatTimeAgo } from "@/lib/format";
-import { IdeaIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { FilterButton, Button } from "@/ui";
+import { Lightbulb } from "@phosphor-icons/react";
+import { FilterButton, Button } from "@spaceui/primitives";
 
 const PAGE_SIZE = 50;
 
@@ -177,7 +176,7 @@ export function AgentCortex({ agentId }: AgentCortexProps) {
 							className={chatOpen ? "bg-app-selected text-ink" : ""}
 							title="Toggle cortex chat"
 						>
-							<HugeiconsIcon icon={IdeaIcon} className="h-4 w-4" />
+							<Lightbulb className="h-4 w-4" />
 						</Button>
 					</div>
 					</div>

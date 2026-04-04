@@ -6,12 +6,10 @@ import {useLiveContext} from "@/hooks/useLiveContext";
 import {Markdown} from "@/components/Markdown";
 import {ConversationSettingsPanel} from "@/components/ConversationSettingsPanel";
 import {ConversationsSidebar} from "@/components/ConversationsSidebar";
-import {Button} from "@/ui/Button";
-import {Popover, PopoverTrigger, PopoverContent} from "@/ui/Popover";
+import {Button, PopoverRoot, PopoverTrigger, PopoverContent} from "@spaceui/primitives";
 import {api, type ConversationDefaultsResponse, type ConversationSettings} from "@/api/client";
 import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
-import {Settings02Icon} from "@hugeicons/core-free-icons";
-import {HugeiconsIcon} from "@hugeicons/react";
+import {GearSix} from "@phosphor-icons/react";
 
 interface WebChatPanelProps {
 	agentId: string;
@@ -347,10 +345,10 @@ export function WebChatPanel({agentId}: WebChatPanelProps) {
 							</span>
 						)}
 					</div>
-					<Popover open={showSettings} onOpenChange={setShowSettings}>
+					<PopoverRoot open={showSettings} onOpenChange={setShowSettings}>
 						<PopoverTrigger asChild>
 							<Button variant="ghost" size="icon" className="h-7 w-7">
-								<HugeiconsIcon icon={Settings02Icon} className="h-3.5 w-3.5" />
+								<GearSix className="h-3.5 w-3.5" />
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent align="end" sideOffset={4} collisionPadding={16} className="max-h-[80vh] w-96 overflow-y-auto p-3">
@@ -371,7 +369,7 @@ export function WebChatPanel({agentId}: WebChatPanelProps) {
 								</div>
 							)}
 						</PopoverContent>
-					</Popover>
+					</PopoverRoot>
 				</div>
 
 				{/* Messages */}

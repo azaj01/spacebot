@@ -8,7 +8,7 @@ import type { ConversationSettings, ConversationDefaultsResponse } from "@/api/t
 import { isOpenCodeWorker, type ActiveBranch, type ActiveWorker, type ChannelLiveState } from "@/hooks/useChannelLiveState";
 import { LiveDuration } from "@/components/LiveDuration";
 import { ConversationSettingsPanel } from "@/components/ConversationSettingsPanel";
-import { Popover, PopoverTrigger, PopoverContent } from "@/ui/Popover";
+import { PopoverRoot, PopoverTrigger, PopoverContent } from "@spaceui/primitives";
 import { formatTimeAgo, formatTimestamp, platformIcon, platformColor } from "@/lib/format";
 
 const VISIBLE_MESSAGES = 6;
@@ -180,7 +180,7 @@ export function ChannelCard({
 					</div>
 				</div>
 				<div className="ml-2 flex shrink-0 items-center gap-2">
-					<Popover open={showSettings} onOpenChange={setShowSettings}>
+					<PopoverRoot open={showSettings} onOpenChange={setShowSettings}>
 						<PopoverTrigger asChild>
 							<button
 								onClick={(e) => {
@@ -211,7 +211,7 @@ export function ChannelCard({
 								<div className="py-4 text-center text-xs text-ink-faint">Loading...</div>
 							)}
 						</PopoverContent>
-					</Popover>
+					</PopoverRoot>
 					<button
 						onClick={(e) => {
 							e.preventDefault();

@@ -21,8 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { api } from "@/api/client";
 import type { ChannelLiveState } from "@/hooks/useChannelLiveState";
 import { useAgentOrder } from "@/hooks/useAgentOrder";
-import { DashboardSquare01Icon, Settings01Icon, LeftToRightListBulletIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { SquaresFour, Gear, List } from "@phosphor-icons/react";
 import { CreateAgentDialog } from "@/components/CreateAgentDialog";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 
@@ -147,7 +146,7 @@ export function Sidebar({ liveStates: _liveStates }: SidebarProps) {
 					}`}
 					title="Dashboard"
 				>
-					<HugeiconsIcon icon={DashboardSquare01Icon} className="h-4 w-4" />
+					<SquaresFour className="h-4 w-4" />
 				</Link>
 				<Link
 					to="/orchestrate"
@@ -169,7 +168,7 @@ export function Sidebar({ liveStates: _liveStates }: SidebarProps) {
 					}`}
 					title="Tasks"
 				>
-					<HugeiconsIcon icon={LeftToRightListBulletIcon} className="h-4 w-4" />
+					<List className="h-4 w-4" />
 				</Link>
 				<Link
 					to="/settings"
@@ -178,7 +177,7 @@ export function Sidebar({ liveStates: _liveStates }: SidebarProps) {
 					}`}
 					title="Settings"
 				>
-					<HugeiconsIcon icon={Settings01Icon} className="h-4 w-4" />
+					<Gear className="h-4 w-4" />
 				</Link>
 				<div className="my-1 h-px w-5 bg-sidebar-line" />
 				<DndContext

@@ -3,9 +3,9 @@ import {useQuery, useQueryClient, useQueries} from "@tanstack/react-query";
 import {api, type WorkerRunInfo} from "@/api/client";
 import {OpenCodeEmbed} from "@/components/OpenCodeEmbed";
 import {LiveDuration} from "@/components/LiveDuration";
-import {Badge} from "@/ui/Badge";
+import {Badge} from "@spaceui/primitives";
 import {useLiveContext} from "@/hooks/useLiveContext";
-import {cx} from "@/ui/utils";
+import { cx } from "class-variance-authority";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
