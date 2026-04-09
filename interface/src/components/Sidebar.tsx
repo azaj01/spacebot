@@ -186,6 +186,7 @@ export function Sidebar({liveStates: _liveStates}: SidebarProps) {
 	const [hasDefaulted, setHasDefaulted] = useState(false);
 	const [switcherOpen, setSwitcherOpen] = useState(false);
 	const [comingSoonOpen, setComingSoonOpen] = useState(false);
+	const [scrollTop, setScrollTop] = useState(0);
 
 	const {data: globalSettings} = useQuery({
 		queryKey: ["global-settings"],
@@ -311,8 +312,12 @@ export function Sidebar({liveStates: _liveStates}: SidebarProps) {
 				</Popover.Root>
 			</div>
 
+			{/* Scrollable area: primary nav + sections */}
+			<div className="relative flex-1 overflow-hidden">
+				<div className={`pointer-events-none absolute inset-x-0 top-0 z-10 h-6 bg-gradient-to-b from-sidebar to-transparent transition-opacity duration-150 ${scrollTop > 0 ? "opacity-100" : "opacity-0"}`} />
+			<div className="h-full overflow-y-auto px-3 pb-4" onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}>
 			{/* Primary nav */}
-			<nav className="space-y-0.5 px-3 py-3">
+			<nav className="space-y-0.5 py-3">
 				{navItems.map((item) => {
 					const Icon = item.icon;
 					const isActive = item.exact
@@ -336,9 +341,6 @@ export function Sidebar({liveStates: _liveStates}: SidebarProps) {
 					);
 				})}
 			</nav>
-
-			{/* Scrollable sections */}
-			<div className="flex-1 overflow-y-auto px-3 pb-4">
 				{/* Projects section */}
 				{projects.length > 0 && (
 					<section className="mb-4">
@@ -455,6 +457,7 @@ export function Sidebar({liveStates: _liveStates}: SidebarProps) {
 						</DndContext>
 					</div>
 				</section>
+			</div>
 			</div>
 
 			{/* Footer */}
